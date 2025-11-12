@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 
 [RequireComponent(typeof(Collider2D))]
 public class BasketMover : MonoBehaviour
 {
+    public FireworksFXSpawner fireworks;
     [Header("Movement Settings")]
     public float minX = -4.7f;
     public float maxX = -0.7f;
@@ -14,10 +15,10 @@ public class BasketMover : MonoBehaviour
 
     public event Action OnRoundResolved;     // fired on catch OR miss (miss comes from FloorMiss)
     public event Action OnShuffleComplete;   // after delay+shuffle
+    public ParticleSystem missFXPrefab;   // assign smoke/dust prefab
 
-    Coroutine moveRoutine;
     bool caughtMan = false;
-
+    Coroutine moveRoutine;
     public void ResetBasket() => caughtMan = false;
 
     // Called by Cannon after round resolved to animate shuffle after delay
@@ -60,6 +61,9 @@ public class BasketMover : MonoBehaviour
 
         Destroy(collision.gameObject);
         if (ScoreManager.Instance != null) ScoreManager.Instance.AddPoint(1);
+        
+        if (fireworks != null)
+            fireworks.PlayCelebration();
 
         OnRoundResolved?.Invoke(); // tell Cannon the round is decided
     }
