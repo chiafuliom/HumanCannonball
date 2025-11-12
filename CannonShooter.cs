@@ -1,7 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.EnhancedTouch; // for Touch.activeTouches
+
 
 public class CannonShooter : MonoBehaviour
 {
@@ -32,6 +35,8 @@ public class CannonShooter : MonoBehaviour
 
     void Awake()
     {
+      //  EnhancedTouchSupport.Enable();
+
         if (fireButton != null) fireButton.onClick.AddListener(TryFire);
 
         if (basketMover != null)
@@ -58,30 +63,28 @@ public class CannonShooter : MonoBehaviour
         }
     }
 
-    void Update()
+  /*  void Update()
     {
-        // Touch (Android / iOS)
-        if (Input.touchCount > 0)
+        // Touch (Android/iOS/new Input System)
+        foreach (var t in UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches)
         {
-            for (int i = 0; i < Input.touchCount; i++)
+            if (t.phase == UnityEngine.InputSystem.TouchPhase.Began && !TouchOverUI_NewInput(t))
             {
-                var t = Input.GetTouch(i);
-                if (t.phase == TouchPhase.Began && !TouchOverUI(t)) { TryFire(); break; }
+                TryFire();
+                break;
             }
         }
-
-#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
-        // Mouse fallback for Editor testing
-        bool overUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
-        if (!overUI && Input.GetButtonDown("Fire1")) TryFire();
-#endif
+        // Remove/disable any old Input.GetButtonDown or Input.touchCount code
     }
 
-    bool TouchOverUI(Touch t)
+
+    bool TouchOverUI_NewInput(UnityEngine.InputSystem.EnhancedTouch.Touch t)
     {
-        if (EventSystem.current == null) return false;
-        return EventSystem.current.IsPointerOverGameObject(t.fingerId);
+        // EventSystem check; use the touchId (same idea as fingerId)
+        return EventSystem.current != null &&
+               EventSystem.current.IsPointerOverGameObject(t.touchId);
     }
+  */
 
     // ✅ Public entry (Button should call THIS)
     public void TryFire()
